@@ -14,7 +14,7 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar dark class="red darken-4">
+    <v-toolbar dark class="red darken-2">
       <v-toolbar-side-icon class="hidden-sm-and-up"
                            @click.native.stop = "sideNav = !sideNav"/>
       <v-toolbar-title>อวท 4.0</v-toolbar-title>
@@ -26,13 +26,13 @@
         </v-btn>
       </v-toolbar-items>
     </v-toolbar>
-    <v-content class="white">
+    <v-content>
       <v-container>
         <nuxt />
       </v-container>
     </v-content>
     <v-footer :fixed="fixed" app class="red darken-1" dark>
-      <span>PANAS->computer&copy;2018 </span><nuxt-link to="/adminLogin">[สำหรับผู้ดูแลระบบ]</nuxt-link>
+      <span>PANAS->computer&copy;2018</span>
     </v-footer>
   </v-app>
 </template>
@@ -45,10 +45,9 @@ export default {
       sideNav: false,
       fixed: false,
       Items: [
-        { icon: 'home', title: 'หน้าหลัก', to: '/' },
-        { icon: 'group', title: '[ครู-เจ้าหน้าที่]', to: '/taLogin' },
-        { icon: 'person_add', title: 'สมัครสมาชิก', to: '/register' },
-        { icon: 'lock_open', title: 'เข้าสู่ระบบ', to: '/login' },
+        { icon: 'home', title: 'หนักหลัก', to: '/member' },
+        { icon: 'group', title: 'ข้อมูลส่วนตัว', to: '/member' },
+        { icon: 'lock', title: 'ออกจากระบบ', to: '/' },
       ],
     }
   },

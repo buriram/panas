@@ -2,35 +2,53 @@
   <div>
     <h1>Student List</h1>
     <v-select
+      :headers="headers"
       :items="clsList"
       v-model="cls"
-      label="Select"
+      label="โปรดเลือกชั้นปี"
       single-line
     />
-    <select v-model="cls">
-      <option value="1">1</option>
-      <option value="2">2</option>
-    </select>
-    <ul>
-      <li v-for="st in students" :key="st.id">
-        {{ st.code }} {{ st.firstName }} {{ st.lastName }}
-        <v-btn @click="editStudent(st.id)">Edit</v-btn>
-      </li>
-    </ul>
+    <v-data-table :headers="headers" :items="students" hide-actions class="elevation-1">
+      <template slot="items" slot-scope="props">
+        <td class="text-xs-left">{{ props.item.code }} {{ props.item.first_name }} {{ props.item.last_name }}</td>
+        <td class="text-xs-left"><v-checkbox v-model="chk" :value="props.item.code"/></td>
+      </template>
+    </v-data-table>
+    <div class="text-xs-right">
+      <v-btn color="primary" dark style="cursor : pointer" @click="save">check<v-icon>add_box</v-icon></v-btn>
+      <v-snackbar
+        v-model="snackbar"
+        top>
+        <v-alert :value="true" outline color="primary" dark icon="cloud_done" @click.native="snackbar = false">
+          Success Data.
+        </v-alert>
+      </v-snackbar>
+    </div>
   </div>
 </template>
 <script>
 export default {
   data() {
     return {
-      cls: '1',
+      user: JSON.parse(window.sessionStorage.getItem('user')),
+      cls: '',
+      chk: [],
       students: [],
-      clsList: [
-        { value: '1', text: 'ชั้นปีที่ 1' },
-        { value: '2', text: 'ชั้นปีที่ 2' },
-        { value: '3', text: 'ชั้นปีที่ 3' },
+      snackbar: false,
+      classe: [],
+      headers: [
+        { text: 'Data', align: 'left', sortable: false},
+        { text: 'Check', align: 'left', sortable: false},
       ],
     }
+  },
+  computed: {
+    clsList() {
+      return this.classe.map(x => ({value: `${x.class_id}`, text: `${x.class_name}`}))
+    },
+    filteredStudent() {
+      return this.students.filter(x => x.class + '' === this.cls)
+    },
   },
   watch: {
     cls() {
@@ -40,15 +58,36 @@ export default {
   async created() {
     console.log('created')
     this.getStudent()
+    this.getClass_id()
   },
   methods: {
+    async getClass_id() {
+      let res = await this.$http.get('http://chk.cdp58.com/api/list_class.php?ta_code=' + this.user.user)
+      if (res.data.classed.length > 0) {
+        this.classe = res.data.classed
+      }
+    },
     async getStudent() {
       // let res = await this.$http.get('/student?class=' + this.cls)
-      let res = await this.$http.get('/student', {params: {class: this.cls}})
-      this.students = res.data.student
+      // let res = await this.$http.get('/student', {params: {class: this.cls}})
+      if (this.cls != '') {
+        let res = await this.$http.get('http://chk.cdp58.com/api/list_student.php?class=' + this.cls)
+        if (res.data.student.length > 0) {
+          this.students = res.data.student
+        }
+      }
     },
-    editStudent(id) {
-      this.$router.push('/student/edit?id=' + id)
+    async save() {
+      let res = await this.$http.post('http://chk.cdp58.com/api/st_check.php', {chk: this.chk, user: this.user.user})
+      // console.log(thik.chk)
+      console.log(res.data.ok)
+      if (res.data.ok != true) {
+        // TODO: แสดงข้อความ ว่าบันทึกไม่สำเร็จ
+      } else {
+        // TODO: แสดงข้อความ ว่าบันทึกสำเร็จ
+        // this.$router.push('/student')
+        this.snackbar = true
+      }
     },
   }, // methods
 }

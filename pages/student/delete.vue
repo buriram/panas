@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h1>Student Edit</h1>
+    <h1>Student Delete</h1>
     <v-text-field v-model="firstName" label="ชื่อ" />
     <v-text-field v-model="lastName" label="นามสกุล" />
-    <v-btn @click="save">บันทึก</v-btn>
+    <v-btn @click="save" color="warning">ยืนยันการลบ</v-btn>
   </div>
 </template>
 <script>
@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     async save() {
-      let res = await this.$http.post('/student/save', {
+      let res = await this.$http.post('/student/delete', {
         id: this.$route.query.id,
         firstName: this.firstName,
         lastName: this.lastName,

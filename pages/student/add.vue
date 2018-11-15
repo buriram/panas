@@ -1,9 +1,12 @@
 <template>
   <div>
-    <h1>Student Edit</h1>
+    <h1>Student Add</h1>
+    <v-text-field v-model="code" label="รหัสนักศึกษา" />
     <v-text-field v-model="firstName" label="ชื่อ" />
     <v-text-field v-model="lastName" label="นามสกุล" />
-    <v-btn @click="save">บันทึก</v-btn>
+    <v-text-field v-model="birth" label="วันเดือนปิเกิด" />
+    <v-text-field v-model="st_class" label="กลุ่ม" />
+    <v-btn @click="save" color="success">บันทึก</v-btn>
   </div>
 </template>
 <script>
@@ -11,31 +14,21 @@
 export default {
   data() {
     return {
+      code: '',
       firstName: '',
       lastName: '',
+      birth: '',
+      st_class: '',
     }
-  },
-  async created() {
-    let res = await this.$http.get('/student/id/' + this.$route.query.id)
-    this.firstName = res.data.student.firstName || ''
-    this.lastName = res.data.student.lastName || ''
-    // {
-    //   ok: true,
-    //   student: {
-    //     id: 1,
-    //     firstName: '',
-    //     lastName: '',
-    //     birth: '',
-    //     class: 1,
-    //   }
-    // }
   },
   methods: {
     async save() {
-      let res = await this.$http.post('/student/save', {
-        id: this.$route.query.id,
+      let res = await this.$http.post('/student/save2', {
+        code: this.code,
         firstName: this.firstName,
         lastName: this.lastName,
+        birth: this.birth,
+        st_class: this.st_class,
       })
       if (!res.data.ok) {
         // TODO: แสดงข้อความ ว่าบันทึกไม่สำเร็จ
